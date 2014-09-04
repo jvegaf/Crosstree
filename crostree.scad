@@ -12,105 +12,109 @@
 //-- Released under the GPL license
 //-------------------------------------------------------------------------
 
-//Cylinder1
-C1Height = 1;
-C1Radio1 = 1/2;
-C1Radio2 = 3/2;
+//cyl_1
+C1Height = 2;
+C1Radio1 = 1;
+C1Radio2 = 3;
 C1Position = C1Height/2;
-//Cylinder2
-C2Height = 3;
+//cyl_2
+C2Height = 6;
 C2Radio = C1Radio2;
 C2Position = C1Position + C1Height/2 + C2Height/2;
-//Cylinder3
-C3Height = 2;
+//cyl_3
+C3Height = 4;
 C3Radio = C1Radio1;
 C3Position = C1Position-C1Height;
-//Crosstree
-Length = 40;
-//base
-BaseLength = 60;
-BaseHeight = 1;
+//crosstree
+Lenght = 80;
+//coin
+coinLenght = 100;
+coinRadio = coinLenght / 2;
+coinHeight = 1.5;
+//coin2
+coin2Radio = coinRadio; //120
+coin2Interior = coinLenght - (coinLenght * 0.1); //100 aprox
+coin2InnerRadio = coin2Interior / 2;
+
+conjunto1Pos = [Lenght/2, 0, 0];
+conjunto2Pos = [-(Lenght/2), 0, 0];
+conjunto3Pos = [0, Lenght/2, 0];
+conjunto4Pos = [0,-(Lenght/2), 0]; 
 
 
-set1Pos = [Length/2, 0, 0];
-set2Pos = [-(Length/2), 0, 0];
-set3Pos = [0, Length/2, 0];
-set4Pos = [0,-(Length/2), 0]; 
-
-
-module cylinder1() {
+module cyl_1() {
 	cylinder(h=C1Height,r1=C1Radio1, r2=C1Radio2 ,$fn = 120, center = true);
 }
-module cylinder2() {
+module cyl_2() {
 	translate(C2Position)
 	cylinder(h=C2Height,r=C2Radio , center = true, $fn = 120);
 }
-module cylinder3() {
+module cyl_3() {
 	cylinder(h=C3Height,r=C3Radio, $fn = 120 , center = true);
 }
 
-module set() {
+module conjunto() {
 	union() {
 		translate([0, 0, C1Position])
-		cylinder1();
+		cyl_1();
 		translate([0, 0, C2Position])
-		cylinder2();
+		cyl_2();
 		translate([0, 0, C3Position])
-		cylinder3();
+		cyl_3();
 	}
 
 }
 
-module crosstree_negative() {
+module crosstree() {
 	union() {
 		hull() {
 			translate([0, 0, C1Position])
-			translate(set1Pos)
-			cylinder1();
+			translate(conjunto1Pos)
+			cyl_1();
 			translate([0, 0, C1Position])
-			translate(set2Pos)
-			cylinder1();
+			translate(conjunto2Pos)
+			cyl_1();
 		}
 		hull() {
 			translate([0,0 ,C2Position])
-			translate(set1Pos)
-			cylinder2();
+			translate(conjunto1Pos)
+			cyl_2();
 			translate([0, 0, C2Position])
-			translate(set2Pos)
-			cylinder2();
+			translate(conjunto2Pos)
+			cyl_2();
 		}
 		hull() {
 			translate([0,0 ,C3Position])
-			translate(set1Pos)
-			cylinder3();
+			translate(conjunto1Pos)
+			cyl_3();
 			translate([0, 0, C3Position])
-			translate(set2Pos)
-			cylinder3();
+			translate(conjunto2Pos)
+			cyl_3();
 		}
 
 		hull() {
 			translate([0, 0, C1Position])
-			translate(set3Pos)
-			cylinder1();
+			translate(conjunto3Pos)
+			cyl_1();
 			translate([0, 0, C1Position])
-			translate(set4Pos)
-			cylinder1();
+			translate(conjunto4Pos)
+			cyl_1();
 		}
 		hull() {
 			translate([0,0 ,C2Position])
-			translate(set3Pos)
-			cylinder2();
+			translate(conjunto3Pos)
+			cyl_2();
 			translate([0, 0, C2Position])
-			translate(set4Pos)
-			cylinder2();
+			translate(conjunto4Pos)
+			cyl_2();
 		}
 		hull() {
 			translate([0,0 ,C3Position])
-			translate(set3Pos)
-			cylinder3();
+			translate(conjunto3Pos)
+			cyl_3();
 			translate([0, 0, C3Position])
-			translate(set4Pos)
-			cylinder3();
+			translate(conjunto4Pos)
+			cyl_3();
 		}
 	}
 
@@ -118,29 +122,30 @@ module crosstree_negative() {
 
 }
 
-module Base() {
+module coin() {
 	translate([0, 0, 0.4])
-	cylinder(h=BaseHeight,r=BaseLength/2 , center = true, $fn=240);
+	cylinder(h=coinHeight,r=coinLenght/2 , center = true, $fn=240);
 }
 
-module Base2() {
+module coin2() {
 	translate([0, 0, 1.5])
 	difference() {
-		cylinder(h=3,r=60/2, center=true, $fn=240);
-		cylinder(h=4,r=50/2, center=true, $fn=240);
+		cylinder(h=3,r=coin2Radio, center=true, $fn=240);
+		cylinder(h=4,r=coin2InnerRadio, center=true, $fn=240);
 	}
 }
 
-module Crosstree() {
+module final() {
 	union() {
 		difference() {
-			Base();
-			crosstree_negative();
+			coin();
+			crosstree();
 		}
-		Base2();
+		coin2();
 	}
 
 
 }
 
-Crosstree();
+final();
+//crosstree();
